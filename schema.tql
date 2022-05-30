@@ -1,0 +1,118 @@
+define
+
+    public-service sub entity,
+    plays hasInput:service,
+    plays hasRule:service,
+    plays hasCost: service,
+    plays hasOutput: service,
+    plays hasChannel:service,
+    plays visitation:service,
+    owns identifier @key,
+    owns name,
+    owns description;
+
+    evidence sub entity,
+    plays hasInput:in,
+    plays input-citizen:in,
+    owns identifier,
+    owns name @key,
+    owns description;
+
+    output sub entity,
+    plays hasOutput:out,
+    plays output-citizen:out;
+    owns identifier,
+    owns name @key,
+    owns description;
+
+    cost sub entity,
+    plays hasCost:in,
+    plays input-citizen:in,
+    plays finacial-help:in,
+    owns @identifier,
+    owns amount,
+    owns currency;
+
+    channel sub entity,
+    plays hasChannel:ch,
+    owns identifier,
+    owns name,
+    owns description;
+    
+    rul sub entity,
+    plays hasRule:rul,
+    owns @identifier,
+    owns description;
+
+    citizen sub entity,
+    plays visitation:citizen,
+    plays input-citizen:citizen,
+    plays cost-citizen:citizen, 
+    owns both-partner-aggreement,
+    owns marriage-duration,
+    owns income,
+    owns kids,
+    owns citizenship;
+
+    identifier sub attribute,
+    value string;
+
+    name sub attribute,
+    value string;
+
+    description sub attribute,
+    value string;
+
+    amount sub attribute,
+    value double;
+
+    currency sub attribute,
+    value string;
+
+    kids sub attribute,
+    value boolean;
+    
+    marriage-duration sub attribute,
+    value double;
+
+    both-partner-aggreement sub attribute,
+    value boolean;
+
+    income sub attribute,
+    value double;
+
+    hasCost sub relation,
+    relates cost,
+    relates output;
+
+    hasOutput sub relation,
+    relates output,
+    relates public-service;
+
+    hasChannel sub relation,
+    relates channel,
+    relates public-service;
+
+    hasInput sub relation,
+    relates public-service,
+    relates evidence;
+
+    hasRule sub relation,
+    relates public-service,
+    relates rul;
+
+    visitation sub relation,
+    relates public-service,
+    relates citizen;
+
+
+    rule synenaitiko-diaz-cost:
+    when {
+        $serv isa public-service;
+        $c isa citizen, has both-partner-aggreement=true;
+        $cost isa cost, has identifier "synenaitiko";
+        (service:$serv, citizen:$c) isa visitation;
+        (service:$serv, cost:$cost) isa hasCost;
+    } then {
+        (citizen:$c, cost:$cost) isa cost-citizen;
+    }
