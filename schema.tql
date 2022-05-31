@@ -26,7 +26,7 @@ define
     owns description;
 
     cost sub entity,
-    plays hasCost:in,
+    plays hasCost:cost,
     plays input-citizen:in,
     plays finacial-help:in,
     owns @identifier,
@@ -49,6 +49,9 @@ define
     plays input-citizen:citizen,
     plays cost-citizen:citizen, 
     owns both-partner-aggreement,
+    owns children-custody-aggreement,
+    owns both-partners-present,
+    owns abuse,
     owns marriage-duration,
     owns income,
     owns kids,
@@ -78,6 +81,9 @@ define
     both-partner-aggreement sub attribute,
     value boolean;
 
+    children-custody-aggreement sub attribute,
+    value boolean;
+
     income sub attribute,
     value double;
 
@@ -105,14 +111,88 @@ define
     relates public-service,
     relates citizen;
 
+    input-citizen sub relation,
+    relates citizen,
+    relates in;
 
-    rule synenaitiko-diaz-cost:
+    cost-citizen sub relation,
+    relates citizen,
+    relates cost;
+
+
+    rule uncontested-divorce-cost:
     when {
         $serv isa public-service;
         $c isa citizen, has both-partner-aggreement=true;
-        $cost isa cost, has identifier "synenaitiko";
+        $cost isa cost, has identifier "uncontested";
         (service:$serv, citizen:$c) isa visitation;
         (service:$serv, cost:$cost) isa hasCost;
     } then {
         (citizen:$c, cost:$cost) isa cost-citizen;
-    }
+    };
+
+    rule uncontested-divorce-information:
+    when {
+        $serv isa public-service;
+        $in isa evidence, has identifier "uncontested";
+        (service:$serv,citizen:$c) isa visitation;
+        (service:$serv, in:$in) isa hasInput;
+    } then {
+        (citizen:$c, in:$in) isa input-citizen;
+    };
+
+   rule contested-divorce-cost:
+    when {
+        $serv isa public-service;
+        $c isa citizen, has both-partner-aggreement=false;
+        $cost isa cost, has identifier "contested";
+        (service:$serv, citizen:$c) isa visitation;
+        (service:$serv, cost:$cost) isa hasCost;
+    } then {
+        (citizen:$c, cost:$cost) isa cost-citizen;
+    };
+
+    rule contested-divorce-information:
+     when {
+         $serv isa public-service;
+         $in isa evidence, has identifier "contested";
+         (service:$serv,citizen:$c) isa visitation;
+         (service:$serv, in:$in) isa hasInput;
+     } then {
+         (citizen:$c, in:$in) isa input-citizen;
+     };
+
+    rule children-custody:
+     when {
+         $serv isa public-service;
+         $c isa citizen, has kids= true;
+         $in isa evidence, has identifier "children";
+         (service:$serv,citizen:$c) isa visitation;
+         (service:$serv, in:$in) isa hasInput;
+     } then {
+         (citizen:$c, in:$in) isa input-citizen;
+     };
+
+     rule children-custody-aggreement:
+      when {
+         $serv isa public-service;
+         $c isa citizen, has children-custody-aggreement= true;
+         $in isa evidence, has identifier "custody-aggrement";
+         (service:$serv,citizen:$c) isa visitation;
+         (service:$serv, in:$in) isa hasInput;
+      } then {
+          (citizen: $c, in = $in) isa input-citizen;
+      }
+
+      rule abuse:
+        when {
+            $serv isa public-service;
+            $c isa citizen, has abuse = true;
+            $in isa evidence, has identifier "uncontested";
+            (service:$serv,citizen:$c) isa visitation;
+            (service:$serv, in:$in) isa hasInput;
+        } then {
+            (citizen:$c, in:$in) isa input-citizen;
+        }
+
+    //change some input to outputs. 
