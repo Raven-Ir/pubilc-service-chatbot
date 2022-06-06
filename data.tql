@@ -1,0 +1,9 @@
+insert
+
+$serv isa public-service, has identifier "Divorce", has name "Έκδοση Διαζυγίου";
+
+$in1 isa evidence, has identifier "always", has name "Πληρεξούσιο Δικηγόρων", has description "Πληρεξούσιο Δικηγόρων εκδομένο εντός του τελευταίου μήνα σε περίπτωση που οι ενάγοντες δεν θέλουν να παραστούν αυτοπροσώπως στο δικαστήριο";
+$in2 isa evidence, has identifier "always", has name "Πιστοποιητικό Οικογενειακής Κατάστασης";
+$in3 isa evidence, has identifier "always", has name "Ληξιαρχική Πράξη Γάμου";
+
+$in4 isa evidence, has identifier "uncontested", has name
