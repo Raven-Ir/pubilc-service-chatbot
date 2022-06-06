@@ -49,10 +49,10 @@ define
     plays input-citizen:citizen,
     plays cost-citizen:citizen, 
     owns both-partner-aggreement,
-    owns children-custody-aggreement,
     owns both-partners-present,
-    owns abuse,
+    owns serious-marrige-change,
     owns marriage-duration,
+    owns partner-dissapearence-duration,
     owns income,
     owns kids,
     owns citizenship;
@@ -83,6 +83,12 @@ define
 
     children-custody-aggreement sub attribute,
     value boolean;
+
+    serious-marrige-change sub attribute,
+    value boolean;
+
+    partner-dissapearence-duration sub attribute,
+    value double;
 
     income sub attribute,
     value double;
@@ -119,7 +125,7 @@ define
     relates citizen,
     relates cost;
 
-
+    ##Rule for the cost of an Uncontested Divorce
     rule uncontested-divorce-cost:
     when {
         $serv isa public-service;
@@ -131,6 +137,7 @@ define
         (citizen:$c, cost:$cost) isa cost-citizen;
     };
 
+    ##Rule for the EVIDENCE of Uncontested Divorce
     rule uncontested-divorce-evidence:
     when {
         $serv isa public-service;
@@ -141,6 +148,7 @@ define
         (citizen:$c, in:$in) isa input-citizen;
     };
 
+   ##Rule for the COST of CONTESTED Divorce
    rule contested-divorce-cost:
     when {
         $serv isa public-service;
@@ -152,6 +160,7 @@ define
         (citizen:$c, cost:$cost) isa cost-citizen;
     };
 
+    ##Rule for the EVIDENCE of CONTESTED Divorce
     rule contested-divorce-evidence:
      when {
          $serv isa public-service;
@@ -162,21 +171,11 @@ define
          (citizen:$c, in:$in) isa input-citizen;
      };
 
-    rule children-custody:
-     when {
-         $serv isa public-service;
-         $c isa citizen, has kids= true;
-         $in isa evidence, has identifier "children";
-         (service:$serv,citizen:$c) isa visitation;
-         (service:$serv, in:$in) isa hasInput;
-     } then {
-         (citizen:$c, in:$in) isa input-citizen;
-     };
-
+    ##Rule if both partners agree on the custody.
     rule children-custody-aggreement:
       when {
          $serv isa public-service;
-         $c isa citizen, has children-custody-aggreement= true;
+         $c isa citizen, has kids= true, has children-custody-aggreement= true;
          $in isa evidence, has identifier "custody-aggrement";
          (service:$serv,citizen:$c) isa visitation;
          (service:$serv, in:$in) isa hasInput;
@@ -184,10 +183,10 @@ define
           (citizen: $c, in = $in) isa input-citizen;
       };
 
-    rule abuse:
+    rule serious-marriage-change-rule:
      when {
             $serv isa public-service;
-            $c isa citizen, has abuse = true;
+            $c isa citizen, has serious-marriage-change = true;
             $out isa output, has identifier "contested";
             (service:$serv,citizen:$c) isa visitation;
             (service:$serv, out:$out) isa hasOutput;
@@ -195,10 +194,12 @@ define
             (citizen:$c, out:$out) isa output-citizen;
      };
 
+    
+    ##Rule for INFORMATION of UNCONTESTED divorce
     rule uncontested-divorce-information:
      when {
          $serv isa public-service;
-         $c isa citizen, has both-partner-aggreement=true;
+         $c isa citizen, has both-partner-aggreement=true, marriage-duration >= 6;
          $out isa output, has identifier "uncontested";
          (service:$serv,citizen:$c) isa visitation;
          (service:$serv, out:$out) isa hasOutput;
@@ -206,6 +207,7 @@ define
         (citizen:$c, out:$out) isa output-citizen;
     };
 
+    ##Rule for INFORMATION of CONTESTED divorce
     rule contested-divorce-information:
      when {
          $serv isa public-service;
@@ -214,9 +216,10 @@ define
          (service:$serv,citizen:$c) isa visitation;
          (service:$serv, out:$out) isa hasOutput;
      } then {
-        (citizen:$c, out:$out) isa output-citizen;
+         (citizen:$c, out:$out) isa output-citizen;
     };
 
+    ##Rule for reason SPECIAL OCCASIONS divorce
     rule contested-divorce-special-occasions:
      when {
          $serv isa public-service;
@@ -224,6 +227,42 @@ define
          $out isa output, has identifier "contested";
          (service:$serv,citizen:$c) isa visitation;
          (service:$serv, out:$out) isa hasOutput;
+     } then {
+        (citizen:$c, out:$out) isa output-citizen;
+    };
+
+    ##Rule about partner dissapearence
+    rule parnter-dissapearence:
+    when{
+        $serv isa public-service;
+        $c isa citizen, has both-partners-present=false;
+        $out isa output, has identifier "contested";
+        (service:$serv,citizen:$c) isa visitation;
+        (service:$serv, out:$out) isa hasOutput;
+    } then {
+        (citizen:$c, out:$out) isa output-citizen;
+    }
+
+    ##Rule for LOW INCOME to be free of charge
+    rule free-of-charge:
+    when {
+        $serv isa public-service;
+        $c isa citizen, has income < 8000;
+        $cost isa cost, has identifier "low-income";
+        (service:$serv,citizen:$c) isa visitation;
+        (service:$serv, cost:$cost) isa hasCost;
+    } then {
+        (citizen:$c, cost:$cost) isa cost-citizen;
+    }
+
+    ##Rule about partners living in seperation for at least 2 years.
+    rule partner-seperated:
+    when {
+        $serv isa public-service;
+        $c isa citizen, has partner-seperated-duration > 23;
+        $out isa output, has identifier "contested";
+        (service:$serv,citizen:$c) isa visitation;
+        (service:$serv, out:$out) isa hasOutput;
      } then {
         (citizen:$c, out:$out) isa output-citizen;
     };
