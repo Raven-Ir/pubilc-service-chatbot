@@ -3,8 +3,8 @@ define
     public-service sub entity,
     plays hasInput:service,
     plays hasRule:service,
-    plays hasCost: service,
-    plays hasOutput: service,
+    plays hasCost:service,
+    plays hasOutput:service,
     plays hasChannel:service,
     plays visitation:service,
     owns identifier @key,
@@ -20,16 +20,15 @@ define
 
     output sub entity,
     plays hasOutput:out,
-    plays output-citizen:out;
+    plays output-citizen:out,
     owns identifier,
     owns name @key,
     owns description;
 
     cost sub entity,
     plays hasCost:cost,
-    plays input-citizen:in,
-    plays finacial-help:in,
-    owns @identifier,
+    plays cost-citizen:cost,
+    owns  identifier,
     owns amount,
     owns currency;
 
@@ -41,22 +40,23 @@ define
     
     rul sub entity,
     plays hasRule:rul,
-    owns @identifier,
+    owns identifier,
     owns description;
 
     citizen sub entity,
     plays visitation:citizen,
     plays input-citizen:citizen,
     plays cost-citizen:citizen, 
+    plays output-citizen:citizen,
     owns both-partner-aggreement,
     owns both-partners-present,
     owns serious-marrige-change,
     owns marriage-duration,
     owns partner-seperated-duration,
+    owns children-custody-aggreement,
     owns special-situations,
     owns income,
-    owns kids,
-    owns citizenship;
+    owns kids;
 
     identifier sub attribute,
     value string;
@@ -74,59 +74,73 @@ define
     value string;
 
     kids sub attribute,
-    value boolean;
+    value string,
+    regex "^(yes|no)";
     
     marriage-duration sub attribute,
     value double;
 
     both-partner-aggreement sub attribute,
-    value boolean;
+    value string,
+    regex "^(yes|no)";
 
-    both-partners-present sub attribute.
-    value double;
+    both-partners-present sub attribute,
+    value string,
+    regex "^(yes|no)";
 
     children-custody-aggreement sub attribute,
-    value boolean;
+    value string,
+    regex "^(yes|no)";
 
     serious-marrige-change sub attribute,
-    value boolean;
+    value string,
+    regex "^(yes|no)";
 
     partner-seperated-duration sub attribute,
     value double;
 
     special-situations sub attribute,
-    value boolean;
+    value string,
+    regex "^(yes|no)";
 
     income sub attribute,
     value double;
 
     hasCost sub relation,
-    relates cost,
-    relates output;
+    relates service,
+    relates cost;
 
     hasOutput sub relation,
-    relates output,
-    relates public-service;
-
+    relates service,
+    relates out;
+    
     hasChannel sub relation,
-    relates channel,
-    relates public-service;
+    relates ch,
+    relates service;
 
     hasInput sub relation,
-    relates public-service,
-    relates evidence;
+    relates service,
+    relates in;
 
     hasRule sub relation,
-    relates public-service,
+    relates service,
     relates rul;
 
+    hasChannel sub relation,
+    relates service,
+    relates ch;
+
     visitation sub relation,
-    relates public-service,
+    relates service,
     relates citizen;
 
     input-citizen sub relation,
     relates citizen,
     relates in;
+
+    output-citizen sub relation,
+    relates citizen,
+    relates out;
 
     cost-citizen sub relation,
     relates citizen,
@@ -136,7 +150,7 @@ define
     rule uncontested-divorce-cost:
     when {
         $serv isa public-service;
-        $c isa citizen, has both-partner-aggreement=true;
+        $c isa citizen, has both-partner-aggreement "yes";
         $cost isa cost, has identifier "uncontested";
         (service:$serv, citizen:$c) isa visitation;
         (service:$serv, cost:$cost) isa hasCost;
@@ -159,7 +173,7 @@ define
    rule contested-divorce-cost:
     when {
         $serv isa public-service;
-        $c isa citizen, has both-partner-aggreement=false;
+        $c isa citizen, has both-partner-aggreement "no";
         $cost isa cost, has identifier "contested";
         (service:$serv, citizen:$c) isa visitation;
         (service:$serv, cost:$cost) isa hasCost;
@@ -182,19 +196,19 @@ define
     rule children-custody-aggreement:
       when {
          $serv isa public-service;
-         $c isa citizen, has kids= true, has children-custody-aggreement= true;
+         $c isa citizen, has kids "yes", has children-custody-aggreement "yes";
          $in isa evidence, has identifier "custody-aggrement";
          (service:$serv,citizen:$c) isa visitation;
          (service:$serv, in:$in) isa hasInput;
       } then {
-          (citizen: $c, in = $in) isa input-citizen;
+        (citizen:$c, in:$in) isa input-citizen;
       };
     
     ##Rule for INFORMATION of UNCONTESTED divorce
     rule uncontested-divorce-information:
      when {
          $serv isa public-service;
-         $c isa citizen, has both-partner-aggreement=true, marriage-duration >= 6;
+         $c isa citizen, has both-partner-aggreement "yes", has marriage-duration >= 6;
          $out isa output, has identifier "uncontested";
          (service:$serv,citizen:$c) isa visitation;
          (service:$serv, out:$out) isa hasOutput;
@@ -206,7 +220,7 @@ define
     rule contested-divorce-information:
      when {
          $serv isa public-service;
-         $c isa citizen, has both-partner-aggreement=false;
+         $c isa citizen, has both-partner-aggreement "no";
          $out isa output, has identifier "contested";
          (service:$serv,citizen:$c) isa visitation;
          (service:$serv, out:$out) isa hasOutput;
@@ -218,7 +232,7 @@ define
     rule contested-divorce-special-occasions:
      when {
          $serv isa public-service;
-         $c isa citizen, has special-situations=false;
+         $c isa citizen, has special-situations "no";
          $out isa output, has identifier "contested";
          (service:$serv,citizen:$c) isa visitation;
          (service:$serv, out:$out) isa hasOutput;
@@ -230,13 +244,13 @@ define
     rule partner-dissapearence:
     when{
         $serv isa public-service;
-        $c isa citizen, has both-partners-present=false;
+        $c isa citizen, has both-partners-present "no";
         $out isa output, has identifier "contested";
         (service:$serv,citizen:$c) isa visitation;
         (service:$serv, out:$out) isa hasOutput;
     } then {
         (citizen:$c, out:$out) isa output-citizen;
-    }
+    };
 
     ##Rule for LOW INCOME to be free of charge
     rule free-of-charge:
@@ -248,7 +262,7 @@ define
         (service:$serv, cost:$cost) isa hasCost;
     } then {
         (citizen:$c, cost:$cost) isa cost-citizen;
-    }
+    };
 
     ##Rule about partners living in seperation for at least 2 years.
     rule partner-seperated:
