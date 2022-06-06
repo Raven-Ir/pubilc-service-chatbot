@@ -131,7 +131,7 @@ define
         (citizen:$c, cost:$cost) isa cost-citizen;
     };
 
-    rule uncontested-divorce-information:
+    rule uncontested-divorce-evidence:
     when {
         $serv isa public-service;
         $in isa evidence, has identifier "uncontested";
@@ -152,7 +152,7 @@ define
         (citizen:$c, cost:$cost) isa cost-citizen;
     };
 
-    rule contested-divorce-information:
+    rule contested-divorce-evidence:
      when {
          $serv isa public-service;
          $in isa evidence, has identifier "contested";
@@ -173,7 +173,7 @@ define
          (citizen:$c, in:$in) isa input-citizen;
      };
 
-     rule children-custody-aggreement:
+    rule children-custody-aggreement:
       when {
          $serv isa public-service;
          $c isa citizen, has children-custody-aggreement= true;
@@ -182,17 +182,48 @@ define
          (service:$serv, in:$in) isa hasInput;
       } then {
           (citizen: $c, in = $in) isa input-citizen;
-      }
+      };
 
-      rule abuse:
-        when {
+    rule abuse:
+     when {
             $serv isa public-service;
             $c isa citizen, has abuse = true;
-            $in isa evidence, has identifier "uncontested";
+            $out isa output, has identifier "contested";
             (service:$serv,citizen:$c) isa visitation;
-            (service:$serv, in:$in) isa hasInput;
+            (service:$serv, out:$out) isa hasOutput;
         } then {
-            (citizen:$c, in:$in) isa input-citizen;
-        }
+            (citizen:$c, out:$out) isa output-citizen;
+     };
 
-    //change some input to outputs. 
+    rule uncontested-divorce-information:
+     when {
+         $serv isa public-service;
+         $c isa citizen, has both-partner-aggreement=true;
+         $out isa output, has identifier "uncontested";
+         (service:$serv,citizen:$c) isa visitation;
+         (service:$serv, out:$out) isa hasOutput;
+     } then {
+        (citizen:$c, out:$out) isa output-citizen;
+    };
+
+    rule contested-divorce-information:
+     when {
+         $serv isa public-service;
+         $c isa citizen, has both-partner-aggreement=false;
+         $out isa output, has identifier "contested";
+         (service:$serv,citizen:$c) isa visitation;
+         (service:$serv, out:$out) isa hasOutput;
+     } then {
+        (citizen:$c, out:$out) isa output-citizen;
+    };
+
+    rule contested-divorce-special-occasions:
+     when {
+         $serv isa public-service;
+         $c isa citizen, has special-situations=false;
+         $out isa output, has identifier "contested";
+         (service:$serv,citizen:$c) isa visitation;
+         (service:$serv, out:$out) isa hasOutput;
+     } then {
+        (citizen:$c, out:$out) isa output-citizen;
+    };
