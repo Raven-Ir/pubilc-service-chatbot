@@ -52,7 +52,8 @@ define
     owns both-partners-present,
     owns serious-marrige-change,
     owns marriage-duration,
-    owns partner-dissapearence-duration,
+    owns partner-seperated-duration,
+    owns special-situations,
     owns income,
     owns kids,
     owns citizenship;
@@ -81,14 +82,20 @@ define
     both-partner-aggreement sub attribute,
     value boolean;
 
+    both-partners-present sub attribute.
+    value double;
+
     children-custody-aggreement sub attribute,
     value boolean;
 
     serious-marrige-change sub attribute,
     value boolean;
 
-    partner-dissapearence-duration sub attribute,
+    partner-seperated-duration sub attribute,
     value double;
+
+    special-situations sub attribute,
+    value boolean;
 
     income sub attribute,
     value double;
@@ -182,18 +189,6 @@ define
       } then {
           (citizen: $c, in = $in) isa input-citizen;
       };
-
-    rule serious-marriage-change-rule:
-     when {
-            $serv isa public-service;
-            $c isa citizen, has serious-marriage-change = true;
-            $out isa output, has identifier "contested";
-            (service:$serv,citizen:$c) isa visitation;
-            (service:$serv, out:$out) isa hasOutput;
-        } then {
-            (citizen:$c, out:$out) isa output-citizen;
-     };
-
     
     ##Rule for INFORMATION of UNCONTESTED divorce
     rule uncontested-divorce-information:
@@ -232,7 +227,7 @@ define
     };
 
     ##Rule about partner dissapearence
-    rule parnter-dissapearence:
+    rule partner-dissapearence:
     when{
         $serv isa public-service;
         $c isa citizen, has both-partners-present=false;
