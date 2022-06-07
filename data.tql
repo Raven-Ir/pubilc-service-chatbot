@@ -6,4 +6,39 @@ $in1 isa evidence, has identifier "always", has name "Πληρεξούσιο Δ�
 $in2 isa evidence, has identifier "always", has name "Πιστοποιητικό Οικογενειακής Κατάστασης";
 $in3 isa evidence, has identifier "always", has name "Ληξιαρχική Πράξη Γάμου";
 
-$in4 isa evidence, has identifier "uncontested", has name
+$in4 isa evidence, has identifier "contested", has name "Άλλα Έγγραφα", has description "Έγγραφα που μπορούν ανάλογα ,να αποδείξουν ή να αποκρούσουν, τους ισχυρισμούς που προβάλλονται στην αγωγή διαζυγίου και τα οποία καθορίζει κατά περίπτωση ο δικηγόρος του κάθε διαδίκου";
+$in5 isa evidence, has identifier "custody-aggrement", has name "Συμφωνία Επιμέλειας Τέκνων", has description "Σε περίπτωση που και οι δύο σύζυγοι συμφωνούν για την επιμέλεια του/των παιδιού/παιδιών, μαζί με το διαζύγιο θα υπογραφεί και η Συμφωνία Επιμέλειας Τέκνων. Σε περίπτωση που δεν υπάρχει συμφωνία μεταξύ των συζύγων, η επιμέλεια θα καθοριστεί από τον δικαστή";
+$in6 isa evidence, has identifier "low-income", has name "Φορολογική Δήλωση";
+
+
+$ch1 isa channel, has identifier "court", has name "Αρμόδιο Μονομελές Πρωτοδικείο"΄
+$ch2 isa channel, has identifier "gov.gr", has name "gov.gr", has description "Πλέον δύνεται η δυνατότητα στον πολίτη να γλιτώσει χρόνο και μετακινήσεις, βγάζοντας άυλο συνεναιτικό διαζύγιο ηλεκτρονικά μέσω του gov.gr. Το κόστος ωστόσο και τα δικαιολογητικά παραμένουν τα ίδια.";
+
+$out1 isa output, has identifier "contested", has name "Διαζύγιο Κατ'αντιδικία", has description "Σε περίπτωση μη ύπαρξης συναίνεσης μεταξύ των συζύγων, ο γάμος μπορεί να λυθεί με ενέργειες που μπορούν να εκκινήσουν μονομερώς από τον κάθε σύζυγο χωριστά. Η διαδικασία αυτή αποτελεί το διαζύγιο με αντιδικία. Σε περίπτωση διαζυγιου κατ' αντιδικία, ο γάμος λύνεται α) είτε λόγω ισχυρών κλονιστικών γεγονότων του γάμου (διαζύγιο λόγω ισχυρού κλονισμού του γάμου) β) είτε λόγω διαστάσεως υπέρ τη διετία (διαζύγιο λόγω διετούς διάστασης).";
+$out2 isa output, has identifier "uncontested", has name "Συναινετικό Διαζύγιο", has description "Το συνεταιτικό διαζύγιο απαιτεί την συμφωνία και των δύο συζύγων. Δεν απαιτείται συμφωνία και σε περιουσιακά θέματα ή επιμέλεια παιδιών αν υπάρχουν. "
+$out3 isa output, has identifier "online-contested", has name "Άυλο Συναινετικό", has description  "Πλέον δύναται η δυνατότητα έκδοσης συνναιτικού διαζυγίου διαδικτυακά μέσω της πλατφόρμας του gov.gr. Δεν υπάρχει διαφορά κόστους και απαιτούμενων δικαιολογητικών, αλλά ο πολίτης γλιτώνει πολίτιμο χρόνο.";
+
+$rule1 isa rul, has identifier "1", has description "Συμφωνούν και οι δύο μεριές";
+$rule2 isa rul, has identifier "2", has description "Ύπαρξη τέκνων";
+$rule3 isa rul, has identifier "3", has description "Ισχυρός κλονισμός έγγαμης σχέσης";
+$rule4 isa rul, has identifier "4", has description "Ο γάμος διήρκησε τουλάχιστον 6 μήνες";
+$rule5 isa rul, has identifier "5", has description " Ύπαρξη διγαμίας, μοιχεία, εγκατάλειψη του ενάγοντα, άσκησης ενδοοικογενειακής βίας εναντίον του ενάγοντα";
+$rule6 isa rul, has identifier "6", has description "Οι σύζυγοι βρίσκονται σε διάσταση συνεχώς επί δύο τουλάχιστον χρόνια";
+$rule7 isa rul, has identifier "7", has description "Ένας από τους συζύγους έχει κηρυχθεί σε αφάνεια";
+$rule8 isa rul, has identifier "8", has description "Χαμηλό ετήσιο εισόδημα";
+
+$cost1 isa cost, has identifier "uncontested", has amount 450.00, has currency "euro", has description "Τα έξοδα δεν περιλαμβάνουν την αμοιβή του δικηγόρου.";
+$cost2 isa cost, has identifier "contested", has amount 500.00, has currency "euro", has description "Τα έξοδα δεν περιλαμβάνουν την αμοιβή του δικηγόρου.";
+$cost3 isa cost, has identifier "low-income", has amount 0.00, has currency "euro", has description "Λόγου χαμηλού εισοδήματος δικαιούστε νομικής συνδρομής..";
+
+$hasin1 (service:$serv, in:$in1) isa hasInput;
+$hasin2 (service:$serv, in:$in2) isa hasInput;
+$hasin3 (service:$serv, in:$in3) isa hasInput;
+$hasin4 (service:$serv, in:$in4) isa hasInput;
+$hasin5 (service:$serv, in:$in5) isa hasInput;
+$hasin6 (service:$serv, in:$in6) isa hasInput;
+
+$hascost1 (service:$serv, cost:$cost1) isa hasCost;
+$hascost2 (service:$serv, cost:$cost2) isa hasCost;
+$hascost3 (service:$serv, cost:$cost3) isa hasCost;
+

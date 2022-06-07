@@ -30,7 +30,8 @@ define
     plays cost-citizen:cost,
     owns  identifier,
     owns amount,
-    owns currency;
+    owns currency,
+    owns description;
 
     channel sub entity,
     plays hasChannel:ch,
@@ -53,7 +54,6 @@ define
     owns serious-marrige-change,
     owns marriage-duration,
     owns partner-seperated-duration,
-    owns children-custody-aggreement,
     owns special-situations,
     owns income,
     owns kids;
@@ -85,10 +85,6 @@ define
     regex "^(yes|no)";
 
     both-partners-present sub attribute,
-    value string,
-    regex "^(yes|no)";
-
-    children-custody-aggreement sub attribute,
     value string,
     regex "^(yes|no)";
 
@@ -158,6 +154,18 @@ define
         (citizen:$c, cost:$cost) isa cost-citizen;
     };
 
+    ##Rule for ONLINE UNCONTESTED divorce
+    rule uncontested-divorce-online:
+    when {
+        $serv isa public-service;
+        $c isa citizen, has both-partner-aggreement "yes";
+        $out isa output, has identifier "gov.gr";
+        (service:$serv, citizen:$c) isa visitation;
+        (service:$serv, output:$out) isa hasOutput;
+    } then {
+        (citizen:$c, output:$out) isa output-citizen;
+    };
+
     ##Rule for the EVIDENCE of Uncontested Divorce
     rule uncontested-divorce-evidence:
     when {
@@ -196,7 +204,7 @@ define
     rule children-custody-aggreement:
       when {
          $serv isa public-service;
-         $c isa citizen, has kids "yes", has children-custody-aggreement "yes";
+         $c isa citizen, has kids "yes";
          $in isa evidence, has identifier "custody-aggrement";
          (service:$serv,citizen:$c) isa visitation;
          (service:$serv, in:$in) isa hasInput;
