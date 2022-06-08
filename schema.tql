@@ -161,9 +161,9 @@ define
         $c isa citizen, has both-partner-aggreement "yes";
         $out isa output, has identifier "gov.gr";
         (service:$serv, citizen:$c) isa visitation;
-        (service:$serv, output:$out) isa hasOutput;
+        (service:$serv, out:$out) isa hasOutput;
     } then {
-        (citizen:$c, output:$out) isa output-citizen;
+        (citizen:$c, out:$out) isa output-citizen;
     };
 
     ##Rule for the EVIDENCE of Uncontested Divorce
@@ -270,6 +270,18 @@ define
         (service:$serv, cost:$cost) isa hasCost;
     } then {
         (citizen:$c, cost:$cost) isa cost-citizen;
+    };
+
+    ##Rule for EVIDENCE to be free of charge
+    rule free-of-charge:
+    when {
+        $serv isa public-service;
+        $c isa citizen, has income < 8000;
+        $in isa evidence, has identifier "low-income";
+        (service:$serv,citizen:$c) isa visitation;
+        (service:$serv, in:$in) isa hasInput;
+    } then {
+        (citizen:$c, in:$in) isa input-citizen;
     };
 
     ##Rule about partners living in seperation for at least 2 years.
