@@ -1,0 +1,58 @@
+version: "2.0"
+
+rules:
+
+- rule: Say goodbye anytime the user says goodbye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+
+- rule: Greet anytime the user greets
+  steps:
+  - intent: greet
+  - action: utter_greet
+
+- rule: Say 'I am a bot' anytime the user challenges
+  steps:
+  - intent: bot_challenge
+  - action: utter_iamabot
+
+- rule: Show evidence for uncontested divorce
+  steps:
+  - intent: information_unco
+  - action: utter_evidence_unco
+
+- rule: Show evidence for contested divorce
+  steps:
+  - intent: information_co
+  - action: utter_evidence_co
+
+- rule: Show information for uncontested divorces
+  steps:
+  - intent: divorce_unco
+  - action: utter_info_unco
+
+- rule: Show information for contested divorces
+  steps:
+  - intent: divorce_co
+  - action: utter_info_co
+  
+- rule: Show information for online divorces
+  steps:
+  - intent: divorce_online
+  - action: utter_info_online
+
+- rule: Show information for cases with kids
+  steps:
+  - intent: has_kids
+  - action: utter_kids_info
+
+- rule: Show cost for unco
+  steps:
+  - intent: unco_cost
+  - action: utter_cost_unco
+
+- rule: Show cost for co
+  steps:
+  - intent: co_cost
+  - action: utter_cost_co

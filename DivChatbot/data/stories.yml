@@ -1,0 +1,45 @@
+version: "2.0"
+
+stories:
+
+- story: Uncontested Divorce info
+  steps:
+  - intent: divorce_type
+  - action: utter_divtype_help
+  - intent: affirm
+  - action: utter_partner_aggrement
+  - intent: affirm
+  - action: utter_info_unco
+  - intent: cost
+  - action: utter_cost_unco
+  - intent: information_unco
+  - action: utter_evidence_unco
+
+- story: Contested Divorce info
+  steps:
+  - intent: divorce_type
+  - action: utter_divtype_help
+  - intent: affirm
+  - action: utter_partner_aggrement
+  - intent: deny
+  - action: utter_info_co
+  - intent: cost
+  - action: utter_cost_co
+  - intent: information_co
+  - action: utter_evidence_co
+
+- story: All Divorce info
+  steps:
+  - intent: divorce_type
+  - action: utter_divtype_help
+  - intent: deny
+  - action: utter_divtype_show_notif
+  - action: utter_info_co
+  - action: utter_info_unco
+  - action: utter_info_online
+
+- story: Free of charge
+  steps:
+  - intent: free_of_charge
+  - action: utter_cost_non
+  - action: utter_cost_non_ev
